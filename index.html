@@ -5,40 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Making Pixels from Scratch — Generative AI in Computer Vision</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:         #FAFAF8;
-      --surface:    #F2F1EC;
-      --border:     #E0DEDA;
-      --text:       #1A1918;
-      --muted:      #5E5C57;
-      --hint:       #9E9B94;
-      --purple-bg:  #EEEDFE;
-      --purple-tx:  #3C3489;
-      --teal-bg:    #E1F5EE;
-      --teal-tx:    #085041;
-      --coral-bg:   #FAECE7;
-      --coral-tx:   #712B13;
-    }
+      --bg:         #FDFAF8;
+      --surface:    #F8F3F0;
+      --border:     #EDE6E1;
+      --text:       #2D2520;
+      --muted:      #6B5C55;
+      --hint:       #A8978F;
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg:        #18181A;
-        --surface:   #222225;
-        --border:    #333338;
-        --text:      #F0EFE9;
-        --muted:     #A8A6A0;
-        --hint:      #66645F;
-        --purple-bg: #26215C;
-        --purple-tx: #CECBF6;
-        --teal-bg:   #04342C;
-        --teal-tx:   #9FE1CB;
-        --coral-bg:  #4A1B0C;
-        --coral-tx:  #F5C4B3;
-      }
+      --rose-bg:    #FDF0F3;
+      --rose-mid:   #E8A0B0;
+      --rose-tx:    #7A2E42;
+      --rose-border:#D4849A;
+
+      --blush-bg:   #FEF5F0;
+      --blush-mid:  #F2C4A8;
+      --blush-tx:   #7D3A1E;
+      --blush-border:#DFA080;
+
+      --sage-bg:    #F2F6F1;
+      --sage-mid:   #A8C4A0;
+      --sage-tx:    #2E5228;
+      --sage-border:#7DAD74;
+
+      --lavender-bg:#F5F2FC;
+      --lavender-mid:#C4BAF0;
+      --lavender-tx:#3D2A7A;
+      --lavender-border:#A094D8;
+
+      --mauve-bg:   #F7F0F6;
+      --mauve-mid:  #D4A8CC;
+      --mauve-tx:   #5C2055;
+      --mauve-border:#B87CAE;
     }
 
     html { scroll-behavior: smooth; }
@@ -46,7 +48,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Lora', Georgia, serif;
+      font-family: 'DM Sans', sans-serif;
       line-height: 1.8;
       font-size: 17px;
     }
@@ -55,89 +57,113 @@
       position: sticky; top: 0;
       background: var(--bg);
       border-bottom: 1px solid var(--border);
-      padding: .75rem 1.5rem;
+      padding: .75rem 2rem;
       display: flex; align-items: center; justify-content: space-between;
       z-index: 100;
     }
-    .nav-brand { font-family:'DM Mono',monospace; font-size:12px; color:var(--hint); letter-spacing:.1em; text-transform:uppercase; }
+    .nav-brand { font-family:'DM Mono',monospace; font-size:11px; color:var(--hint); letter-spacing:.12em; text-transform:uppercase; }
     .nav-links { display:flex; gap:1.5rem; list-style:none; }
-    .nav-links a { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); text-decoration:none; transition:color .2s; }
+    .nav-links a { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); text-decoration:none; transition:color .2s; }
     .nav-links a:hover { color:var(--text); }
 
-    .wrapper { max-width:780px; margin:0 auto; padding:0 1.5rem 6rem; }
+    .wrapper { max-width:800px; margin:0 auto; padding:0 1.5rem 6rem; }
 
-    .hero { text-align:center; padding:4.5rem 0 3.5rem; border-bottom:1px solid var(--border); margin-bottom:3rem; }
-    .tag { display:inline-block; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--hint); margin-bottom:1.4rem; }
-    h1 { font-family:'Syne',sans-serif; font-size:clamp(2.2rem,6vw,3.6rem); font-weight:800; line-height:1.08; margin-bottom:1.2rem; color:var(--text); }
-    .subtitle { font-size:1.1rem; color:var(--muted); font-style:italic; max-width:540px; margin:0 auto 1.5rem; }
-    .meta { font-family:'DM Mono',monospace; font-size:12px; color:var(--hint); }
+    .hero {
+      text-align:center;
+      padding:5rem 1rem 4rem;
+      border-bottom:1px solid var(--border);
+      margin-bottom:3.5rem;
+    }
+    .tag {
+      display:inline-block;
+      font-family:'DM Mono',monospace;
+      font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+      color:var(--rose-tx);
+      background:var(--rose-bg);
+      border:1px solid var(--rose-border);
+      border-radius:20px;
+      padding:4px 14px;
+      margin-bottom:1.6rem;
+    }
+    h1 {
+      font-family:'Playfair Display', Georgia, serif;
+      font-size:clamp(2.4rem,6vw,3.8rem);
+      font-weight:600;
+      line-height:1.1;
+      margin-bottom:1.2rem;
+      color:var(--text);
+    }
+    h1 em { font-style:italic; color:var(--rose-tx); }
+    .subtitle { font-size:1.05rem; color:var(--muted); font-family:'Playfair Display',serif; font-style:italic; max-width:520px; margin:0 auto 1.5rem; line-height:1.7; }
+    .meta { font-family:'DM Mono',monospace; font-size:11px; color:var(--hint); margin-bottom:1.4rem; }
+    .authors { display:inline-flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:40px; padding:8px 18px 8px 10px; margin-top:.5rem; }
+    .author-avatar { width:32px; height:32px; border-radius:50%; background:var(--rose-bg); border:1px solid var(--rose-border); display:flex; align-items:center; justify-content:center; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; color:var(--rose-tx); flex-shrink:0; }
+    .author-names { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); display:flex; gap:6px; align-items:center; }
+    .author-sep { color:var(--hint); }
 
-    .toc { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.4rem 1.6rem; margin-bottom:3rem; }
-    .toc-title { font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--hint); margin-bottom:.8rem; }
+    .toc { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.5rem 1.8rem; margin-bottom:3.5rem; }
+    .toc-title { font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:.14em; color:var(--hint); margin-bottom:.9rem; }
     .toc ol { padding-left:1.2rem; }
-    .toc li { font-size:.95rem; margin-bottom:.3rem; }
+    .toc li { font-size:.93rem; margin-bottom:.35rem; }
     .toc a { color:var(--muted); text-decoration:none; }
-    .toc a:hover { color:var(--text); text-decoration:underline; }
+    .toc a:hover { color:var(--rose-tx); }
 
     section { margin-bottom:3.5rem; }
-    h2 { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:700; margin-bottom:1.1rem; color:var(--text); padding-top:.5rem; }
-    h3 { font-family:'Syne',sans-serif; font-size:1.2rem; font-weight:600; margin:2.2rem 0 .7rem; color:var(--text); }
+    h2 { font-family:'Playfair Display', serif; font-size:1.9rem; font-weight:600; margin-bottom:1.1rem; color:var(--text); padding-top:.5rem; }
+    h3 { font-family:'Playfair Display', serif; font-size:1.25rem; font-weight:600; margin:2.5rem 0 .8rem; color:var(--text); }
     p { margin-bottom:1.1rem; }
 
-    .lead { font-size:1.1rem; color:var(--muted); font-style:italic; padding-left:1.2rem; border-left:3px solid var(--border); margin-bottom:1.5rem; }
+    .lead { font-size:1.05rem; color:var(--muted); font-family:'Playfair Display',serif; font-style:italic; padding-left:1.2rem; border-left:2px solid var(--rose-border); margin-bottom:1.6rem; line-height:1.8; }
 
     hr { border:none; border-top:1px solid var(--border); margin:3rem 0; }
 
-    .analogy { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.2rem 1.5rem; margin:1.5rem 0; }
-    .analogy-label { font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--hint); margin-bottom:.5rem; }
-    .analogy p { margin:0; font-style:italic; font-size:.97rem; }
+    .analogy { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.3rem 1.6rem; margin:1.6rem 0; }
+    .analogy-label { font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--hint); margin-bottom:.6rem; }
+    .analogy p { margin:0; font-family:'Playfair Display',serif; font-style:italic; font-size:.97rem; color:var(--muted); }
 
-    .summary-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:12px; margin:1.5rem 0; }
-    .summary-card { background:var(--surface); border-radius:8px; padding:1rem 1.1rem; }
-    .s-label { font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--hint); margin-bottom:.4rem; }
-    .s-value { font-size:.92rem; color:var(--muted); line-height:1.5; }
+    .summary-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin:1.5rem 0; }
+    .summary-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.1rem 1.2rem; }
+    .s-label { font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--hint); margin-bottom:.5rem; }
+    .s-value { font-size:.9rem; color:var(--muted); line-height:1.55; }
 
-    .arch-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin:1.5rem 0; }
-    .arch-card { border:1px solid var(--border); border-radius:12px; padding:1.3rem; background:var(--bg); }
-    .arch-icon { width:38px; height:38px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:.9rem; }
-    .icon-gan { background:var(--purple-bg); }
-    .icon-vae { background:var(--teal-bg); }
-    .icon-diff { background:var(--coral-bg); }
-    .arch-name { font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; color:var(--text); margin-bottom:.25rem; }
-    .arch-tagline { font-family:'DM Mono',monospace; font-size:11px; color:var(--hint); text-transform:uppercase; letter-spacing:.07em; margin-bottom:.7rem; }
-    .arch-card p { font-size:.92rem; color:var(--muted); margin:0; line-height:1.6; }
+    .arch-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:1rem; margin:1.6rem 0; }
+    .arch-card { border:1px solid var(--border); border-radius:16px; padding:1.5rem; background:var(--bg); }
+    .arch-dot { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; margin-bottom:1rem; }
+    .dot-rose     { background:var(--rose-bg);     border:1px solid var(--rose-border); }
+    .dot-lavender { background:var(--lavender-bg); border:1px solid var(--lavender-border); }
+    .dot-sage     { background:var(--sage-bg);     border:1px solid var(--sage-border); }
+    .arch-name { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:600; color:var(--text); margin-bottom:.2rem; }
+    .arch-tagline { font-family:'DM Mono',monospace; font-size:10px; color:var(--hint); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.75rem; }
+    .arch-card p { font-size:.9rem; color:var(--muted); margin:0; line-height:1.6; }
 
-    .hl { border-left:3px solid; padding-left:1rem; margin:1.5rem 0; }
-    .hl p { margin:0; font-style:italic; font-size:.95rem; color:var(--muted); }
-    .hl-purple { border-color:#7F77DD; }
-    .hl-teal   { border-color:#1D9E75; }
-    .hl-coral  { border-color:#D85A30; }
+    .hl { border-left:2px solid; padding-left:1rem; margin:1.6rem 0; border-radius:0; }
+    .hl p { margin:0; font-family:'Playfair Display',serif; font-style:italic; font-size:.95rem; color:var(--muted); }
+    .hl-rose     { border-color:var(--rose-border); }
+    .hl-lavender { border-color:var(--lavender-border); }
+    .hl-sage     { border-color:var(--sage-border); }
 
-    .diagram-wrap { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:1.5rem 0; }
-    .diagram-label { font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--hint); padding:.75rem 1.1rem .5rem; }
+    .diagram-wrap { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin:1.6rem 0; }
+    .diagram-label { font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--hint); padding:.9rem 1.2rem .5rem; }
 
-    .table-wrap { overflow-x:auto; margin:1.5rem 0; border-radius:12px; border:1px solid var(--border); }
+    .table-wrap { overflow-x:auto; margin:1.6rem 0; border-radius:16px; border:1px solid var(--border); }
     table { width:100%; border-collapse:collapse; font-size:14px; min-width:560px; }
-    thead th { font-family:'Syne',sans-serif; font-size:13px; font-weight:600; text-align:left; padding:12px 14px; background:var(--surface); color:var(--muted); border-bottom:1px solid var(--border); }
-    tbody td { padding:11px 14px; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.55; color:var(--text); }
+    thead th { font-family:'DM Mono',monospace; font-size:12px; font-weight:500; text-align:left; padding:13px 14px; background:var(--surface); color:var(--muted); border-bottom:1px solid var(--border); letter-spacing:.04em; }
+    tbody td { padding:12px 14px; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.55; color:var(--text); }
     tbody tr:last-child td { border-bottom:none; }
     tbody tr:hover td { background:var(--surface); }
 
-    .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; }
-    .badge-gan  { background:var(--purple-bg); color:var(--purple-tx); }
-    .badge-vae  { background:var(--teal-bg);   color:var(--teal-tx); }
-    .badge-diff { background:var(--coral-bg);  color:var(--coral-tx); }
+    .badge { display:inline-block; padding:3px 12px; border-radius:20px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; }
+    .badge-gan  { background:var(--rose-bg);     color:var(--rose-tx);     border:1px solid var(--rose-border); }
+    .badge-vae  { background:var(--lavender-bg); color:var(--lavender-tx); border:1px solid var(--lavender-border); }
+    .badge-diff { background:var(--sage-bg);     color:var(--sage-tx);     border:1px solid var(--sage-border); }
 
-    .conclusion { text-align:center; padding:3rem 1rem; border-top:1px solid var(--border); margin-top:3rem; }
-    .conclusion h2 { margin-bottom:1rem; }
+    .conclusion { text-align:center; padding:3.5rem 1rem; border-top:1px solid var(--border); margin-top:3rem; }
+    .conclusion h2 { margin-bottom:1rem; font-size:2rem; }
     .conclusion p { color:var(--muted); max-width:520px; margin:0 auto 1rem; }
 
-    footer { text-align:center; padding:2rem 1.5rem; border-top:1px solid var(--border); font-family:'DM Mono',monospace; font-size:12px; color:var(--hint); }
+    footer { text-align:center; padding:2rem 1.5rem; border-top:1px solid var(--border); font-family:'DM Mono',monospace; font-size:11px; color:var(--hint); }
 
-    svg .diagram-bg { fill: var(--surface); }
-    svg text { font-family: 'DM Mono', monospace; }
-
-    @media(max-width:540px){ nav .nav-links { gap:1rem; } h1 { font-size:2rem; } }
+    @media(max-width:540px){ h1{font-size:2rem;} .nav-links{gap:1rem;} }
   </style>
 </head>
 <body>
@@ -155,10 +181,19 @@
 <div class="wrapper">
 
   <div class="hero">
-    <span class="tag">Computer Vision &amp; Generative AI — Mini TAF · April 2026</span>
-    <h1>Making Pixels<br>from Scratch</h1>
-    <p class="subtitle">A plain-English guide to Generative AI in Computer Vision — GANs, VAEs, and Diffusion Models, explained like you're five.</p>
+    <span class="tag">Computer Vision &amp; Generative AI — S8 · April 2026</span>
+    <h1>Making Pixels<br><em>from Scratch</em></h1>
+    <p class="subtitle">A plain-English guide to Generative AI in Computer Vision — GANs, VAEs, and Diffusion Models, explained simply.</p>
     <p class="meta">S8 Deep Learning Module · April 2026</p>
+    <div class="authors">
+      <div class="author-avatar">DA</div>
+      <div class="author-avatar" style="background:var(--lavender-bg);border-color:var(--lavender-border);color:var(--lavender-tx);">DA</div>
+      <div class="author-names">
+        <span>Douae Aouade</span>
+        <span class="author-sep">&amp;</span>
+        <span>Douae Annasri</span>
+      </div>
+    </div>
   </div>
 
   <div class="toc">
@@ -166,108 +201,81 @@
     <ol>
       <li><a href="#what">What is Generative AI in Computer Vision?</a></li>
       <li><a href="#why">Why use Generative AI?</a></li>
-      <li><a href="#architectures">The three main architectures (ELI5)</a>
-        <ol>
-          <li><a href="#gan">GAN — The Counterfeiter vs. The Detective</a></li>
-          <li><a href="#vae">VAE — The Artist Who Paints from Memory</a></li>
-          <li><a href="#diffusion">Diffusion Models — The Sculptor of Chaos</a></li>
+      <li><a href="#architectures">The three main architectures (explained simply)
+        <ol style="margin-top:.3rem;">
+          <li><a href="#gan">GAN — the counterfeiter vs. the detective</a></li>
+          <li><a href="#vae">VAE — the artist who paints from memory</a></li>
+          <li><a href="#diffusion">Diffusion — the sculptor of chaos</a></li>
         </ol>
-      </li>
+      </a></li>
       <li><a href="#comparison">Side-by-side comparison</a></li>
     </ol>
   </div>
 
-  <!-- ────────────────── 1. WHAT ────────────────── -->
+  <!-- 1. WHAT -->
   <section id="what">
     <h2>1. What is Generative AI in Computer Vision?</h2>
-    <p class="lead">Most AI systems you've heard of are "discriminative" — they look at an image and tell you what's in it. Generative AI flips the script: it <em>creates</em> brand-new images from nothing.</p>
+    <p class="lead">Most AI systems are "discriminative" — they look at an image and tell you what's in it. Generative AI flips the script: it <em>creates</em> brand-new images from nothing.</p>
 
-    <p>Traditional CV models are like art critics. They look at a painting and say "that's a cat." Generative AI models are like the artist — they can paint a cat (or an astronaut riding a horse) entirely on their own.</p>
+    <p>Traditional computer vision models are like art critics. They look at a painting and say "that's a cat." Generative AI models are the artist — they can paint a cat (or an astronaut riding a horse) entirely on their own, in any style, that has never existed before.</p>
 
     <div class="analogy">
       <div class="analogy-label">Simple analogy</div>
-      <p>Imagine teaching a child to recognise dogs vs. cats — that's classic CV. Now imagine the child can <em>draw</em> any dog or cat you describe, in any style, that has never existed before. That's Generative AI in Computer Vision.</p>
+      <p>Imagine teaching a child to recognise dogs vs. cats — that's classic computer vision. Now imagine the child can draw any dog or cat you describe, in any style, that has never existed before. That's Generative AI in Computer Vision.</p>
     </div>
 
-    <!-- Diagram 1: Discriminative vs Generative -->
     <div class="diagram-wrap">
-      <div class="diagram-label">Schéma — discriminative vs generative</div>
-      <svg width="100%" viewBox="0 0 680 200" role="img">
+      <div class="diagram-label">Discriminative vs. generative — overview</div>
+      <svg width="100%" viewBox="0 0 680 200" role="img" xmlns="http://www.w3.org/2000/svg">
         <title>Discriminative AI vs Generative AI</title>
-        <desc>Left side: image goes into a classifier and outputs a label. Right side: text or noise goes into a generator and outputs a new image.</desc>
         <defs>
-          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#A8978F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </marker>
         </defs>
 
-        <!-- LEFT: Discriminative -->
-        <text x="170" y="28" text-anchor="middle" font-size="12" fill="var(--hint)" font-family="'DM Mono',monospace">Discriminative AI</text>
+        <text x="170" y="28" text-anchor="middle" font-size="11" fill="#A8978F" font-family="'DM Mono',monospace" letter-spacing=".08em">DISCRIMINATIVE AI</text>
+        <rect x="30" y="44" width="80" height="56" rx="10" fill="#FDF0F3" stroke="#D4849A" stroke-width=".8"/>
+        <text x="70" y="69" text-anchor="middle" font-size="11" fill="#7A2E42" font-family="'DM Mono',monospace">Image</text>
+        <text x="70" y="85" text-anchor="middle" font-size="10" fill="#7A2E42" font-family="'DM Mono',monospace">input</text>
+        <line x1="110" y1="72" x2="148" y2="72" stroke="#A8978F" stroke-width="1" marker-end="url(#a1)"/>
+        <rect x="150" y="44" width="82" height="56" rx="10" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".8"/>
+        <text x="191" y="69" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Classifier</text>
+        <text x="191" y="85" text-anchor="middle" font-size="10" fill="#A8978F" font-family="'DM Mono',monospace">CNN / ViT</text>
+        <line x1="232" y1="72" x2="268" y2="72" stroke="#A8978F" stroke-width="1" marker-end="url(#a1)"/>
+        <rect x="270" y="50" width="72" height="44" rx="10" fill="#F5F2FC" stroke="#A094D8" stroke-width=".8"/>
+        <text x="306" y="70" text-anchor="middle" font-size="11" fill="#3D2A7A" font-family="'DM Mono',monospace">"Cat"</text>
+        <text x="306" y="86" text-anchor="middle" font-size="10" fill="#3D2A7A" font-family="'DM Mono',monospace">Label</text>
 
-        <!-- image box -->
-        <rect x="30" y="45" width="80" height="60" rx="6" fill="var(--purple-bg)" stroke="var(--purple-tx)" stroke-width=".5"/>
-        <text x="70" y="70" text-anchor="middle" font-size="11" fill="var(--purple-tx)" font-family="'DM Mono',monospace">Image</text>
-        <text x="70" y="86" text-anchor="middle" font-size="11" fill="var(--purple-tx)" font-family="'DM Mono',monospace">input</text>
+        <line x1="350" y1="28" x2="350" y2="170" stroke="#EDE6E1" stroke-width="1" stroke-dasharray="4 4"/>
 
-        <!-- arrow -->
-        <line x1="110" y1="75" x2="148" y2="75" stroke="var(--muted)" stroke-width="1" marker-end="url(#arr)"/>
+        <text x="515" y="28" text-anchor="middle" font-size="11" fill="#A8978F" font-family="'DM Mono',monospace" letter-spacing=".08em">GENERATIVE AI</text>
+        <rect x="370" y="44" width="80" height="56" rx="10" fill="#FEF5F0" stroke="#DFA080" stroke-width=".8"/>
+        <text x="410" y="67" text-anchor="middle" font-size="11" fill="#7D3A1E" font-family="'DM Mono',monospace">Noise /</text>
+        <text x="410" y="83" text-anchor="middle" font-size="11" fill="#7D3A1E" font-family="'DM Mono',monospace">Text</text>
+        <line x1="450" y1="72" x2="488" y2="72" stroke="#A8978F" stroke-width="1" marker-end="url(#a1)"/>
+        <rect x="490" y="44" width="82" height="56" rx="10" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".8"/>
+        <text x="531" y="69" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Generator</text>
+        <text x="531" y="85" text-anchor="middle" font-size="10" fill="#A8978F" font-family="'DM Mono',monospace">GAN/VAE/…</text>
+        <line x1="572" y1="72" x2="610" y2="72" stroke="#A8978F" stroke-width="1" marker-end="url(#a1)"/>
+        <rect x="612" y="44" width="56" height="56" rx="10" fill="#FDF0F3" stroke="#D4849A" stroke-width=".8"/>
+        <text x="640" y="69" text-anchor="middle" font-size="11" fill="#7A2E42" font-family="'DM Mono',monospace">New</text>
+        <text x="640" y="85" text-anchor="middle" font-size="11" fill="#7A2E42" font-family="'DM Mono',monospace">Image</text>
 
-        <!-- model box -->
-        <rect x="150" y="45" width="80" height="60" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <text x="190" y="70" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">Classifier</text>
-        <text x="190" y="86" text-anchor="middle" font-size="11" fill="var(--hint)" font-family="'DM Mono',monospace">CNN / ViT</text>
-
-        <!-- arrow -->
-        <line x1="230" y1="75" x2="268" y2="75" stroke="var(--muted)" stroke-width="1" marker-end="url(#arr)"/>
-
-        <!-- label box -->
-        <rect x="270" y="52" width="70" height="46" rx="6" fill="var(--teal-bg)" stroke="var(--teal-tx)" stroke-width=".5"/>
-        <text x="305" y="72" text-anchor="middle" font-size="11" fill="var(--teal-tx)" font-family="'DM Mono',monospace">"Cat"</text>
-        <text x="305" y="88" text-anchor="middle" font-size="10" fill="var(--teal-tx)" font-family="'DM Mono',monospace">Label</text>
-
-        <!-- divider -->
-        <line x1="350" y1="30" x2="350" y2="170" stroke="var(--border)" stroke-width="1" stroke-dasharray="4 4"/>
-
-        <!-- RIGHT: Generative -->
-        <text x="515" y="28" text-anchor="middle" font-size="12" fill="var(--hint)" font-family="'DM Mono',monospace">Generative AI</text>
-
-        <!-- noise/text box -->
-        <rect x="370" y="45" width="80" height="60" rx="6" fill="var(--coral-bg)" stroke="var(--coral-tx)" stroke-width=".5"/>
-        <text x="410" y="68" text-anchor="middle" font-size="11" fill="var(--coral-tx)" font-family="'DM Mono',monospace">Noise /</text>
-        <text x="410" y="84" text-anchor="middle" font-size="11" fill="var(--coral-tx)" font-family="'DM Mono',monospace">Text</text>
-
-        <!-- arrow -->
-        <line x1="450" y1="75" x2="488" y2="75" stroke="var(--muted)" stroke-width="1" marker-end="url(#arr)"/>
-
-        <!-- model box -->
-        <rect x="490" y="45" width="80" height="60" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <text x="530" y="70" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">Generator</text>
-        <text x="530" y="86" text-anchor="middle" font-size="11" fill="var(--hint)" font-family="'DM Mono',monospace">GAN/VAE/…</text>
-
-        <!-- arrow -->
-        <line x1="570" y1="75" x2="608" y2="75" stroke="var(--muted)" stroke-width="1" marker-end="url(#arr)"/>
-
-        <!-- new image box -->
-        <rect x="610" y="45" width="55" height="60" rx="6" fill="var(--purple-bg)" stroke="var(--purple-tx)" stroke-width=".5"/>
-        <text x="637" y="70" text-anchor="middle" font-size="11" fill="var(--purple-tx)" font-family="'DM Mono',monospace">New</text>
-        <text x="637" y="86" text-anchor="middle" font-size="11" fill="var(--purple-tx)" font-family="'DM Mono',monospace">Image</text>
-
-        <!-- bottom captions -->
-        <text x="170" y="155" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="'Lora',serif" font-style="italic">Image → Label</text>
-        <text x="515" y="155" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="'Lora',serif" font-style="italic">Noise → Image</text>
+        <text x="170" y="155" text-anchor="middle" font-size="12" fill="#6B5C55" font-family="'Playfair Display',serif" font-style="italic">Image → Label</text>
+        <text x="515" y="155" text-anchor="middle" font-size="12" fill="#6B5C55" font-family="'Playfair Display',serif" font-style="italic">Noise → Image</text>
       </svg>
     </div>
 
-    <p>Technically, a generative model learns the underlying statistical distribution of a dataset of images. Once it understands <em>how images are structured</em>, it can sample from that distribution to create new, realistic ones.</p>
+    <p>Technically, a generative model learns the underlying statistical distribution of a dataset of images. Once it understands <strong>how images are structured</strong>, it can sample from that distribution to create new, realistic ones.</p>
   </section>
 
   <hr>
 
-  <!-- ────────────────── 2. WHY ────────────────── -->
+  <!-- 2. WHY -->
   <section id="why">
     <h2>2. Why Use Generative AI?</h2>
-    <p>The ability to generate realistic images unlocks applications that were impossible with classical CV.</p>
-
+    <p>The ability to generate realistic images unlocks applications that were impossible with classical computer vision.</p>
     <div class="summary-grid">
       <div class="summary-card">
         <div class="s-label">Data augmentation</div>
@@ -279,7 +287,7 @@
       </div>
       <div class="summary-card">
         <div class="s-label">Creative tools</div>
-        <div class="s-value">Text-to-image, concept art, product design, fashion.</div>
+        <div class="s-value">Text-to-image, concept art, product design, fashion illustration.</div>
       </div>
       <div class="summary-card">
         <div class="s-label">Medical imaging</div>
@@ -290,282 +298,206 @@
 
   <hr>
 
-  <!-- ────────────────── 3. ARCHITECTURES ────────────────── -->
+  <!-- 3. ARCHITECTURES -->
   <section id="architectures">
     <h2>3. The Three Main Architectures</h2>
     <p>Three dominant approaches, each with a different philosophy about how to teach a machine to invent images.</p>
 
     <div class="arch-grid">
       <div class="arch-card">
-        <div class="arch-icon icon-gan">⚔</div>
+        <div class="arch-dot dot-rose">⚔</div>
         <div class="arch-name">GAN</div>
         <div class="arch-tagline">Generative Adversarial Network</div>
         <p>Two networks compete: one fakes, one judges.</p>
       </div>
       <div class="arch-card">
-        <div class="arch-icon icon-vae">◎</div>
+        <div class="arch-dot dot-lavender">◎</div>
         <div class="arch-name">VAE</div>
         <div class="arch-tagline">Variational Autoencoder</div>
-        <p>Compress an image into a code, then decode it to generate.</p>
+        <p>Compress an image into a code, decode it to generate.</p>
       </div>
       <div class="arch-card">
-        <div class="arch-icon icon-diff">❄</div>
+        <div class="arch-dot dot-sage">❄</div>
         <div class="arch-name">Diffusion</div>
         <div class="arch-tagline">Diffusion Models</div>
         <p>Add noise until static, then learn to reverse the process.</p>
       </div>
     </div>
 
-    <!-- ── GAN ── -->
-    <h3 id="gan">3.1 GAN — The Counterfeiter vs. The Detective</h3>
-    <div class="hl hl-purple">
+    <!-- GAN -->
+    <h3 id="gan">3.1 GAN — the counterfeiter vs. the detective</h3>
+    <div class="hl hl-rose">
       <p>Idea: put two networks in competition and let them train each other.</p>
     </div>
 
-    <p>A GAN has two neural networks. The <strong>Generator</strong> creates fake images from random noise. The <strong>Discriminator</strong> tries to distinguish real images from fakes. They train together — the Generator improves by fooling the Discriminator, the Discriminator improves by catching fakes. Eventually the Generator wins: its images are indistinguishable from real ones.</p>
+    <p>A GAN has two neural networks. The <strong>Generator</strong> creates fake images from random noise. The <strong>Discriminator</strong> tries to distinguish real images from fakes. They train together — the Generator improves by fooling the Discriminator; the Discriminator improves by catching fakes. Eventually the Generator wins: its images become indistinguishable from real ones.</p>
 
     <div class="analogy">
-      <div class="analogy-label">ELI5 analogy</div>
-      <p>A forger tries to paint fake Picassos. An art detective checks every canvas — "real or fake?" The forger studies every rejection and gets better and better. Eventually the forgeries become indistinguishable from the originals.</p>
+      <div class="analogy-label">Plain-English analogy</div>
+      <p>A forger tries to paint fake Picassos. An art detective checks every canvas — real or fake? The forger studies every rejection and gets better and better. Eventually the forgeries become indistinguishable from the originals.</p>
     </div>
 
-    <!-- Diagram: GAN -->
     <div class="diagram-wrap">
-      <div class="diagram-label">Schéma — GAN architecture</div>
-      <svg width="100%" viewBox="0 0 680 220" role="img">
-        <title>GAN architecture diagram</title>
-        <desc>Random noise enters the Generator which produces a fake image. That image plus real images feed into the Discriminator which outputs Real or Fake. A feedback loop trains both networks.</desc>
+      <div class="diagram-label">GAN — architecture</div>
+      <svg width="100%" viewBox="0 0 680 220" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>GAN architecture</title>
         <defs>
-          <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#A8978F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="a2b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#7A2E42" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </marker>
         </defs>
-
-        <!-- Noise -->
-        <rect x="20" y="78" width="80" height="44" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <text x="60" y="97" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="'DM Mono',monospace">Random</text>
-        <text x="60" y="112" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="'DM Mono',monospace">noise z</text>
-
-        <!-- arrow: noise → generator -->
-        <line x1="100" y1="100" x2="138" y2="100" stroke="var(--hint)" stroke-width="1" marker-end="url(#arr2)"/>
-
-        <!-- Generator -->
-        <rect x="140" y="64" width="120" height="72" rx="8" fill="var(--purple-bg)" stroke="var(--purple-tx)" stroke-width=".5"/>
-        <text x="200" y="94" text-anchor="middle" font-size="13" fill="var(--purple-tx)" font-family="'DM Mono',monospace" font-weight="500">Generator</text>
-        <text x="200" y="112" text-anchor="middle" font-size="11" fill="var(--purple-tx)" font-family="'DM Mono',monospace">G(z)</text>
-
-        <!-- arrow: generator → fake image -->
-        <line x1="260" y1="100" x2="298" y2="100" stroke="var(--hint)" stroke-width="1" marker-end="url(#arr2)"/>
-
-        <!-- Fake image -->
-        <rect x="300" y="70" width="80" height="60" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <text x="340" y="96" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">Fake</text>
-        <text x="340" y="112" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">image</text>
-
-        <!-- Real image (comes from top) -->
-        <rect x="300" y="10" width="80" height="44" rx="8" fill="var(--teal-bg)" stroke="var(--teal-tx)" stroke-width=".5"/>
-        <text x="340" y="29" text-anchor="middle" font-size="11" fill="var(--teal-tx)" font-family="'DM Mono',monospace">Real</text>
-        <text x="340" y="44" text-anchor="middle" font-size="11" fill="var(--teal-tx)" font-family="'DM Mono',monospace">image</text>
-
-        <!-- both → discriminator -->
-        <line x1="380" y1="32" x2="432" y2="90" stroke="var(--teal-tx)" stroke-width="1" marker-end="url(#arr2)" stroke-dasharray="4 3" opacity=".7"/>
-        <line x1="380" y1="100" x2="418" y2="100" stroke="var(--hint)" stroke-width="1" marker-end="url(#arr2)"/>
-
-        <!-- Discriminator -->
-        <rect x="420" y="64" width="130" height="72" rx="8" fill="var(--coral-bg)" stroke="var(--coral-tx)" stroke-width=".5"/>
-        <text x="485" y="94" text-anchor="middle" font-size="13" fill="var(--coral-tx)" font-family="'DM Mono',monospace" font-weight="500">Discriminator</text>
-        <text x="485" y="112" text-anchor="middle" font-size="11" fill="var(--coral-tx)" font-family="'DM Mono',monospace">D(x)</text>
-
-        <!-- arrow: discriminator → output -->
-        <line x1="550" y1="100" x2="588" y2="100" stroke="var(--hint)" stroke-width="1" marker-end="url(#arr2)"/>
-
-        <!-- Output -->
-        <rect x="590" y="72" width="72" height="56" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <text x="626" y="96" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">Real /</text>
-        <text x="626" y="112" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">Fake?</text>
-
-        <!-- Feedback arrow: discriminator loss → generator -->
-        <path d="M485 136 L485 180 L200 180 L200 136" fill="none" stroke="var(--purple-tx)" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#arr2)" opacity=".6"/>
-        <text x="342" y="196" text-anchor="middle" font-size="11" fill="var(--purple-tx)" font-family="'DM Mono',monospace" opacity=".8">backpropagation — trains Generator</text>
+        <rect x="20" y="78" width="80" height="44" rx="10" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".8"/>
+        <text x="60" y="97" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Random</text>
+        <text x="60" y="113" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">noise z</text>
+        <line x1="100" y1="100" x2="138" y2="100" stroke="#A8978F" stroke-width="1" marker-end="url(#a2)"/>
+        <rect x="140" y="64" width="120" height="72" rx="10" fill="#FDF0F3" stroke="#D4849A" stroke-width=".8"/>
+        <text x="200" y="96" text-anchor="middle" font-size="12" fill="#7A2E42" font-family="'DM Mono',monospace" font-weight="500">Generator</text>
+        <text x="200" y="113" text-anchor="middle" font-size="11" fill="#A8978F" font-family="'DM Mono',monospace">G(z)</text>
+        <line x1="260" y1="100" x2="298" y2="100" stroke="#A8978F" stroke-width="1" marker-end="url(#a2)"/>
+        <rect x="300" y="70" width="78" height="60" rx="10" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".8"/>
+        <text x="339" y="97" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Fake</text>
+        <text x="339" y="113" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">image</text>
+        <rect x="300" y="10" width="78" height="44" rx="10" fill="#F2F6F1" stroke="#7DAD74" stroke-width=".8"/>
+        <text x="339" y="30" text-anchor="middle" font-size="11" fill="#2E5228" font-family="'DM Mono',monospace">Real</text>
+        <text x="339" y="46" text-anchor="middle" font-size="11" fill="#2E5228" font-family="'DM Mono',monospace">image</text>
+        <line x1="378" y1="32" x2="428" y2="90" stroke="#7DAD74" stroke-width="1" marker-end="url(#a2)" stroke-dasharray="4 3" opacity=".7"/>
+        <line x1="378" y1="100" x2="416" y2="100" stroke="#A8978F" stroke-width="1" marker-end="url(#a2)"/>
+        <rect x="418" y="64" width="130" height="72" rx="10" fill="#FDF0F3" stroke="#D4849A" stroke-width=".8"/>
+        <text x="483" y="96" text-anchor="middle" font-size="12" fill="#7A2E42" font-family="'DM Mono',monospace" font-weight="500">Discriminator</text>
+        <text x="483" y="113" text-anchor="middle" font-size="11" fill="#A8978F" font-family="'DM Mono',monospace">D(x)</text>
+        <line x1="548" y1="100" x2="586" y2="100" stroke="#A8978F" stroke-width="1" marker-end="url(#a2)"/>
+        <rect x="588" y="72" width="72" height="56" rx="10" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".8"/>
+        <text x="624" y="97" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Real /</text>
+        <text x="624" y="113" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Fake?</text>
+        <path d="M483 136 L483 178 L200 178 L200 136" fill="none" stroke="#D4849A" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#a2b)" opacity=".7"/>
+        <text x="342" y="195" text-anchor="middle" font-size="11" fill="#7A2E42" font-family="'DM Mono',monospace" opacity=".8">backpropagation — trains Generator</text>
       </svg>
     </div>
 
-    <p><strong>Advantages:</strong> Very fast inference (single forward pass). Produces extremely sharp, photorealistic images. Widely used in style transfer, face synthesis, super-resolution.</p>
+    <p><strong>Advantages:</strong> Very fast inference (single forward pass). Produces sharp, photorealistic images. Widely used in style transfer, face synthesis, and super-resolution.</p>
     <p><strong>Limits:</strong> Training is unstable — risk of mode collapse (Generator produces only a few types of images). Difficult to evaluate quality objectively.</p>
 
-    <!-- ── VAE ── -->
-    <h3 id="vae">3.2 VAE — The Artist Who Paints from Memory</h3>
-    <div class="hl hl-teal">
+    <!-- VAE -->
+    <h3 id="vae">3.2 VAE — the artist who paints from memory</h3>
+    <div class="hl hl-lavender">
       <p>Idea: learn a compact, structured representation of images and sample from it to generate new ones.</p>
     </div>
 
     <p>A VAE has two parts: an <strong>Encoder</strong> that compresses an image into a small latent vector (μ, σ), and a <strong>Decoder</strong> that reconstructs an image from that vector. The latent space is continuous and normally distributed, so you can sample random points from it and decode them into plausible new images.</p>
 
     <div class="analogy">
-      <div class="analogy-label">ELI5 analogy</div>
-      <p>Imagine you compress your memory of every dog you've ever seen into a single mental "concept of dogs." You can now close your eyes, pick a random point in that concept, and draw a new dog that never existed — but looks completely believable.</p>
+      <div class="analogy-label">Plain-English analogy</div>
+      <p>Imagine you compress your memory of every dog you've ever seen into a single mental concept of dogs. Close your eyes, pick a random point in that concept, and draw a new dog that never existed — but looks completely believable.</p>
     </div>
 
-    <!-- Diagram: VAE -->
     <div class="diagram-wrap">
-      <div class="diagram-label">Schéma — VAE architecture</div>
-      <svg width="100%" viewBox="0 0 680 190" role="img">
-        <title>VAE architecture diagram</title>
-        <desc>An image is encoded into a latent space (mu and sigma). A sample z is drawn from that distribution. The decoder reconstructs a new image from z.</desc>
+      <div class="diagram-label">VAE — architecture</div>
+      <svg width="100%" viewBox="0 0 680 190" role="img" xmlns="http://www.w3.org/2000/svg">
+        <title>VAE architecture</title>
         <defs>
-          <marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#A8978F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </marker>
         </defs>
-
-        <!-- Input image -->
-        <rect x="20" y="63" width="80" height="54" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <text x="60" y="85" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="'DM Mono',monospace">Image x</text>
-        <text x="60" y="103" text-anchor="middle" font-size="11" fill="var(--hint)" font-family="'DM Mono',monospace">(real)</text>
-
-        <!-- arrow -->
-        <line x1="100" y1="90" x2="138" y2="90" stroke="var(--hint)" stroke-width="1" marker-end="url(#arr3)"/>
-
-        <!-- Encoder -->
-        <rect x="140" y="55" width="110" height="70" rx="8" fill="var(--teal-bg)" stroke="var(--teal-tx)" stroke-width=".5"/>
-        <text x="195" y="83" text-anchor="middle" font-size="13" fill="var(--teal-tx)" font-family="'DM Mono',monospace" font-weight="500">Encoder</text>
-        <text x="195" y="101" text-anchor="middle" font-size="11" fill="var(--teal-tx)" font-family="'DM Mono',monospace">q(z|x)</text>
-
-        <!-- arrow -->
-        <line x1="250" y1="90" x2="288" y2="90" stroke="var(--hint)" stroke-width="1" marker-end="url(#arr3)"/>
-
-        <!-- Latent space -->
-        <rect x="290" y="50" width="100" height="80" rx="8" fill="var(--purple-bg)" stroke="var(--purple-tx)" stroke-width=".5"/>
-        <text x="340" y="76" text-anchor="middle" font-size="12" fill="var(--purple-tx)" font-family="'DM Mono',monospace" font-weight="500">Latent</text>
-        <text x="340" y="92" text-anchor="middle" font-size="12" fill="var(--purple-tx)" font-family="'DM Mono',monospace">μ, σ → z</text>
-        <text x="340" y="116" text-anchor="middle" font-size="10" fill="var(--purple-tx)" font-family="'DM Mono',monospace">sample z~N(μ,σ)</text>
-
-        <!-- arrow -->
-        <line x1="390" y1="90" x2="428" y2="90" stroke="var(--hint)" stroke-width="1" marker-end="url(#arr3)"/>
-
-        <!-- Decoder -->
-        <rect x="430" y="55" width="110" height="70" rx="8" fill="var(--teal-bg)" stroke="var(--teal-tx)" stroke-width=".5"/>
-        <text x="485" y="83" text-anchor="middle" font-size="13" fill="var(--teal-tx)" font-family="'DM Mono',monospace" font-weight="500">Decoder</text>
-        <text x="485" y="101" text-anchor="middle" font-size="11" fill="var(--teal-tx)" font-family="'DM Mono',monospace">p(x|z)</text>
-
-        <!-- arrow -->
-        <line x1="540" y1="90" x2="578" y2="90" stroke="var(--hint)" stroke-width="1" marker-end="url(#arr3)"/>
-
-        <!-- Output image -->
-        <rect x="580" y="63" width="80" height="54" rx="8" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <text x="620" y="85" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="'DM Mono',monospace">Image x̂</text>
-        <text x="620" y="103" text-anchor="middle" font-size="11" fill="var(--hint)" font-family="'DM Mono',monospace">(new)</text>
-
-        <!-- Generation path label -->
-        <text x="340" y="158" text-anchor="middle" font-size="11" fill="var(--hint)" font-family="'DM Mono',monospace">To generate: sample random z from N(0,1) → Decoder → new image</text>
+        <rect x="20" y="63" width="80" height="54" rx="10" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".8"/>
+        <text x="60" y="86" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Image x</text>
+        <text x="60" y="103" text-anchor="middle" font-size="10" fill="#A8978F" font-family="'DM Mono',monospace">(real)</text>
+        <line x1="100" y1="90" x2="138" y2="90" stroke="#A8978F" stroke-width="1" marker-end="url(#a3)"/>
+        <rect x="140" y="55" width="110" height="70" rx="10" fill="#F5F2FC" stroke="#A094D8" stroke-width=".8"/>
+        <text x="195" y="83" text-anchor="middle" font-size="12" fill="#3D2A7A" font-family="'DM Mono',monospace" font-weight="500">Encoder</text>
+        <text x="195" y="101" text-anchor="middle" font-size="11" fill="#A094D8" font-family="'DM Mono',monospace">q(z|x)</text>
+        <line x1="250" y1="90" x2="288" y2="90" stroke="#A8978F" stroke-width="1" marker-end="url(#a3)"/>
+        <rect x="290" y="50" width="100" height="80" rx="10" fill="#FEF5F0" stroke="#DFA080" stroke-width=".8"/>
+        <text x="340" y="77" text-anchor="middle" font-size="12" fill="#7D3A1E" font-family="'DM Mono',monospace" font-weight="500">Latent</text>
+        <text x="340" y="93" text-anchor="middle" font-size="11" fill="#7D3A1E" font-family="'DM Mono',monospace">μ, σ → z</text>
+        <text x="340" y="116" text-anchor="middle" font-size="10" fill="#A8978F" font-family="'DM Mono',monospace">z~N(μ,σ)</text>
+        <line x1="390" y1="90" x2="428" y2="90" stroke="#A8978F" stroke-width="1" marker-end="url(#a3)"/>
+        <rect x="430" y="55" width="110" height="70" rx="10" fill="#F5F2FC" stroke="#A094D8" stroke-width=".8"/>
+        <text x="485" y="83" text-anchor="middle" font-size="12" fill="#3D2A7A" font-family="'DM Mono',monospace" font-weight="500">Decoder</text>
+        <text x="485" y="101" text-anchor="middle" font-size="11" fill="#A094D8" font-family="'DM Mono',monospace">p(x|z)</text>
+        <line x1="540" y1="90" x2="578" y2="90" stroke="#A8978F" stroke-width="1" marker-end="url(#a3)"/>
+        <rect x="580" y="63" width="80" height="54" rx="10" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".8"/>
+        <text x="620" y="86" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Image x̂</text>
+        <text x="620" y="103" text-anchor="middle" font-size="10" fill="#A8978F" font-family="'DM Mono',monospace">(new)</text>
+        <text x="340" y="158" text-anchor="middle" font-size="10" fill="#A8978F" font-family="'DM Mono',monospace">To generate: sample random z from N(0,1) → Decoder → new image</text>
       </svg>
     </div>
 
     <p><strong>Advantages:</strong> Stable training. Smooth latent space allows interpolation between images. Well-suited for anomaly detection and data augmentation.</p>
-    <p><strong>Limits:</strong> Images tend to be slightly blurry — the model must average over the distribution of possible decodings. Quality is generally lower than GANs or Diffusion.</p>
+    <p><strong>Limits:</strong> Images tend to be slightly blurry — the model must average over the distribution of possible decodings. Quality is generally lower than GANs or Diffusion Models.</p>
 
-    <!-- ── DIFFUSION ── -->
-    <h3 id="diffusion">3.3 Diffusion Models — The Sculptor of Chaos</h3>
-    <div class="hl hl-coral">
+    <!-- DIFFUSION -->
+    <h3 id="diffusion">3.3 Diffusion — the sculptor of chaos</h3>
+    <div class="hl hl-sage">
       <p>Idea: learn to reverse a gradual noising process, one step at a time, until a clean image emerges from static.</p>
     </div>
 
-    <p>Diffusion works in two phases. In the <strong>forward process</strong>, real images have Gaussian noise added step-by-step until they become pure static. In the <strong>reverse process</strong>, a neural network (typically a U-Net) learns to predict and remove the noise added at each step. At generation time, the model starts from pure noise and denoises it iteratively into a coherent image. This powers Stable Diffusion, DALL-E, and Midjourney.</p>
+    <p>Diffusion works in two phases. In the <strong>forward process</strong>, real images have Gaussian noise added step-by-step until they become pure static. In the <strong>reverse process</strong>, a neural network (typically a U-Net) learns to predict and remove the noise added at each step. At generation time, the model starts from pure noise and denoises it iteratively into a coherent image. This is what powers Stable Diffusion, DALL-E, and Midjourney.</p>
 
     <div class="analogy">
-      <div class="analogy-label">ELI5 analogy</div>
+      <div class="analogy-label">Plain-English analogy</div>
       <p>Imagine shredding a photograph into confetti, one tiny cut at a time. A diffusion model watches this destruction carefully, memorising every step. At generation time, it starts with a pile of random confetti and reconstructs the photo in reverse — one piece at a time — until a coherent picture emerges.</p>
     </div>
 
-    <!-- Diagram: Diffusion forward + reverse -->
     <div class="diagram-wrap">
-      <div class="diagram-label">Schéma — diffusion forward &amp; reverse process</div>
-      <svg width="100%" viewBox="0 0 680 230" role="img">
+      <div class="diagram-label">Diffusion — forward and reverse process</div>
+      <svg width="100%" viewBox="0 0 680 230" role="img" xmlns="http://www.w3.org/2000/svg">
         <title>Diffusion model forward and reverse process</title>
-        <desc>Top row shows forward process: clear image progressively gains noise until it becomes pure noise. Bottom row shows reverse process: starting from pure noise, a denoiser removes noise step by step to produce a clean image.</desc>
         <defs>
-          <marker id="arr4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <marker id="a4f" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#D4849A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="a4r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#7DAD74" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </marker>
         </defs>
+        <text x="30" y="22" font-size="10" fill="#A8978F" font-family="'DM Mono',monospace" letter-spacing=".06em">FORWARD PROCESS (training) — add noise step by step</text>
+        <rect x="30" y="34" width="68" height="60" rx="10" fill="#F2F6F1" stroke="#7DAD74" stroke-width=".8"/>
+        <text x="64" y="61" text-anchor="middle" font-size="11" fill="#2E5228" font-family="'DM Mono',monospace">x₀</text>
+        <text x="64" y="77" text-anchor="middle" font-size="10" fill="#2E5228" font-family="'DM Mono',monospace">Clean</text>
+        <line x1="98" y1="64" x2="126" y2="64" stroke="#D4849A" stroke-width="1.2" marker-end="url(#a4f)" opacity=".7"/>
+        <text x="112" y="57" text-anchor="middle" font-size="9" fill="#D4849A" font-family="'DM Mono',monospace">+noise</text>
+        <rect x="128" y="34" width="68" height="60" rx="10" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".8" opacity=".9"/>
+        <text x="162" y="61" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">x_t1</text>
+        <text x="162" y="77" text-anchor="middle" font-size="10" fill="#A8978F" font-family="'DM Mono',monospace">Slight</text>
+        <line x1="196" y1="64" x2="224" y2="64" stroke="#D4849A" stroke-width="1.2" marker-end="url(#a4f)" opacity=".7"/>
+        <text x="210" y="57" text-anchor="middle" font-size="9" fill="#D4849A" font-family="'DM Mono',monospace">+noise</text>
+        <rect x="226" y="34" width="68" height="60" rx="10" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".8" opacity=".7"/>
+        <text x="260" y="61" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">x_t2</text>
+        <text x="260" y="77" text-anchor="middle" font-size="10" fill="#A8978F" font-family="'DM Mono',monospace">Noisy</text>
+        <line x1="294" y1="64" x2="322" y2="64" stroke="#D4849A" stroke-width="1.2" marker-end="url(#a4f)" opacity=".7"/>
+        <text x="340" y="68" font-size="16" fill="#A8978F" font-family="'DM Mono',monospace">···</text>
+        <line x1="362" y1="64" x2="390" y2="64" stroke="#D4849A" stroke-width="1.2" marker-end="url(#a4f)" opacity=".5"/>
+        <rect x="392" y="34" width="78" height="60" rx="10" fill="#FDF0F3" stroke="#D4849A" stroke-width=".8"/>
+        <text x="431" y="61" text-anchor="middle" font-size="11" fill="#7A2E42" font-family="'DM Mono',monospace">x_T</text>
+        <text x="431" y="77" text-anchor="middle" font-size="10" fill="#7A2E42" font-family="'DM Mono',monospace">Pure noise</text>
 
-        <!-- FORWARD PROCESS label -->
-        <text x="30" y="22" font-size="11" fill="var(--hint)" font-family="'DM Mono',monospace">Forward process (training) — add noise step by step</text>
-
-        <!-- x0: clean -->
-        <rect x="30" y="34" width="70" height="60" rx="6" fill="var(--teal-bg)" stroke="var(--teal-tx)" stroke-width=".5"/>
-        <text x="65" y="60" text-anchor="middle" font-size="11" fill="var(--teal-tx)" font-family="'DM Mono',monospace">x₀</text>
-        <text x="65" y="76" text-anchor="middle" font-size="10" fill="var(--teal-tx)" font-family="'DM Mono',monospace">Clean</text>
-
-        <line x1="100" y1="64" x2="128" y2="64" stroke="var(--coral-tx)" stroke-width="1.2" marker-end="url(#arr4)" opacity=".6"/>
-        <text x="114" y="56" text-anchor="middle" font-size="9" fill="var(--coral-tx)" font-family="'DM Mono',monospace" opacity=".8">+noise</text>
-
-        <!-- x_t1 -->
-        <rect x="130" y="34" width="70" height="60" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width=".5" opacity=".9"/>
-        <text x="165" y="60" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">x_t1</text>
-        <text x="165" y="76" text-anchor="middle" font-size="10" fill="var(--hint)" font-family="'DM Mono',monospace">Slight</text>
-
-        <line x1="200" y1="64" x2="228" y2="64" stroke="var(--coral-tx)" stroke-width="1.2" marker-end="url(#arr4)" opacity=".6"/>
-        <text x="214" y="56" text-anchor="middle" font-size="9" fill="var(--coral-tx)" font-family="'DM Mono',monospace" opacity=".8">+noise</text>
-
-        <!-- x_t2 -->
-        <rect x="230" y="34" width="70" height="60" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width=".5" opacity=".7"/>
-        <text x="265" y="60" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">x_t2</text>
-        <text x="265" y="76" text-anchor="middle" font-size="10" fill="var(--hint)" font-family="'DM Mono',monospace">Noisy</text>
-
-        <line x1="300" y1="64" x2="328" y2="64" stroke="var(--coral-tx)" stroke-width="1.2" marker-end="url(#arr4)" opacity=".6"/>
-        <text x="314" y="56" text-anchor="middle" font-size="9" fill="var(--coral-tx)" font-family="'DM Mono',monospace" opacity=".8">+noise</text>
-
-        <!-- dots -->
-        <text x="342" y="68" font-size="16" fill="var(--hint)" font-family="'DM Mono',monospace">···</text>
-
-        <line x1="366" y1="64" x2="394" y2="64" stroke="var(--coral-tx)" stroke-width="1.2" marker-end="url(#arr4)" opacity=".6"/>
-
-        <!-- x_T: pure noise -->
-        <rect x="396" y="34" width="80" height="60" rx="6" fill="var(--coral-bg)" stroke="var(--coral-tx)" stroke-width=".5"/>
-        <text x="436" y="60" text-anchor="middle" font-size="11" fill="var(--coral-tx)" font-family="'DM Mono',monospace">x_T</text>
-        <text x="436" y="76" text-anchor="middle" font-size="10" fill="var(--coral-tx)" font-family="'DM Mono',monospace">Pure noise</text>
-
-        <!-- ─── REVERSE PROCESS ─── -->
-        <text x="30" y="130" font-size="11" fill="var(--hint)" font-family="'DM Mono',monospace">Reverse process (generation) — neural network denoises step by step</text>
-
-        <!-- Start from pure noise -->
-        <rect x="30" y="144" width="80" height="60" rx="6" fill="var(--coral-bg)" stroke="var(--coral-tx)" stroke-width=".5"/>
-        <text x="70" y="168" text-anchor="middle" font-size="11" fill="var(--coral-tx)" font-family="'DM Mono',monospace">z ~ N(0,1)</text>
-        <text x="70" y="184" text-anchor="middle" font-size="10" fill="var(--coral-tx)" font-family="'DM Mono',monospace">Pure noise</text>
-
-        <line x1="110" y1="174" x2="138" y2="174" stroke="var(--teal-tx)" stroke-width="1.2" marker-end="url(#arr4)" opacity=".7"/>
-        <text x="124" y="166" text-anchor="middle" font-size="9" fill="var(--teal-tx)" font-family="'DM Mono',monospace" opacity=".8">denoise</text>
-
-        <!-- step 1 -->
-        <rect x="140" y="144" width="70" height="60" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width=".5" opacity=".8"/>
-        <text x="175" y="170" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">step 1</text>
-        <text x="175" y="186" text-anchor="middle" font-size="9" fill="var(--hint)" font-family="'DM Mono',monospace">U-Net</text>
-
-        <line x1="210" y1="174" x2="238" y2="174" stroke="var(--teal-tx)" stroke-width="1.2" marker-end="url(#arr4)" opacity=".7"/>
-        <text x="224" y="166" text-anchor="middle" font-size="9" fill="var(--teal-tx)" font-family="'DM Mono',monospace" opacity=".8">denoise</text>
-
-        <!-- step 2 -->
-        <rect x="240" y="144" width="70" height="60" rx="6" fill="var(--surface)" stroke="var(--border)" stroke-width=".5" opacity=".9"/>
-        <text x="275" y="170" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">step 2</text>
-        <text x="275" y="186" text-anchor="middle" font-size="9" fill="var(--hint)" font-family="'DM Mono',monospace">U-Net</text>
-
-        <line x1="310" y1="174" x2="338" y2="174" stroke="var(--teal-tx)" stroke-width="1.2" marker-end="url(#arr4)" opacity=".7"/>
-
-        <!-- dots -->
-        <text x="352" y="178" font-size="16" fill="var(--hint)" font-family="'DM Mono',monospace">···</text>
-
-        <line x1="376" y1="174" x2="404" y2="174" stroke="var(--teal-tx)" stroke-width="1.2" marker-end="url(#arr4)" opacity=".7"/>
-
-        <!-- Final clean image -->
-        <rect x="406" y="144" width="70" height="60" rx="6" fill="var(--teal-bg)" stroke="var(--teal-tx)" stroke-width=".5"/>
-        <text x="441" y="168" text-anchor="middle" font-size="11" fill="var(--teal-tx)" font-family="'DM Mono',monospace">x̂₀</text>
-        <text x="441" y="184" text-anchor="middle" font-size="10" fill="var(--teal-tx)" font-family="'DM Mono',monospace">Clean image</text>
-
-        <!-- conditioned on text note -->
-        <rect x="510" y="150" width="148" height="48" rx="6" fill="var(--purple-bg)" stroke="var(--purple-tx)" stroke-width=".5"/>
-        <text x="584" y="170" text-anchor="middle" font-size="11" fill="var(--purple-tx)" font-family="'DM Mono',monospace">+ text prompt</text>
-        <text x="584" y="186" text-anchor="middle" font-size="10" fill="var(--purple-tx)" font-family="'DM Mono',monospace">guides each step</text>
+        <text x="30" y="130" font-size="10" fill="#A8978F" font-family="'DM Mono',monospace" letter-spacing=".06em">REVERSE PROCESS (generation) — neural network denoises step by step</text>
+        <rect x="30" y="144" width="80" height="60" rx="10" fill="#FDF0F3" stroke="#D4849A" stroke-width=".8"/>
+        <text x="70" y="169" text-anchor="middle" font-size="10" fill="#7A2E42" font-family="'DM Mono',monospace">z ~ N(0,1)</text>
+        <text x="70" y="185" text-anchor="middle" font-size="10" fill="#7A2E42" font-family="'DM Mono',monospace">Pure noise</text>
+        <line x1="110" y1="174" x2="136" y2="174" stroke="#7DAD74" stroke-width="1.2" marker-end="url(#a4r)" opacity=".8"/>
+        <text x="123" y="167" text-anchor="middle" font-size="9" fill="#2E5228" font-family="'DM Mono',monospace">denoise</text>
+        <rect x="138" y="144" width="68" height="60" rx="10" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".8" opacity=".85"/>
+        <text x="172" y="171" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">step 1</text>
+        <text x="172" y="187" text-anchor="middle" font-size="9" fill="#A8978F" font-family="'DM Mono',monospace">U-Net</text>
+        <line x1="206" y1="174" x2="234" y2="174" stroke="#7DAD74" stroke-width="1.2" marker-end="url(#a4r)" opacity=".8"/>
+        <text x="220" y="167" text-anchor="middle" font-size="9" fill="#2E5228" font-family="'DM Mono',monospace">denoise</text>
+        <rect x="236" y="144" width="68" height="60" rx="10" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".8" opacity=".92"/>
+        <text x="270" y="171" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">step 2</text>
+        <text x="270" y="187" text-anchor="middle" font-size="9" fill="#A8978F" font-family="'DM Mono',monospace">U-Net</text>
+        <line x1="304" y1="174" x2="332" y2="174" stroke="#7DAD74" stroke-width="1.2" marker-end="url(#a4r)" opacity=".6"/>
+        <text x="352" y="178" font-size="16" fill="#A8978F" font-family="'DM Mono',monospace">···</text>
+        <line x1="372" y1="174" x2="400" y2="174" stroke="#7DAD74" stroke-width="1.2" marker-end="url(#a4r)" opacity=".6"/>
+        <rect x="402" y="144" width="70" height="60" rx="10" fill="#F2F6F1" stroke="#7DAD74" stroke-width=".8"/>
+        <text x="437" y="171" text-anchor="middle" font-size="11" fill="#2E5228" font-family="'DM Mono',monospace">x̂₀</text>
+        <text x="437" y="187" text-anchor="middle" font-size="10" fill="#2E5228" font-family="'DM Mono',monospace">Clean img</text>
+        <rect x="504" y="150" width="152" height="48" rx="10" fill="#F5F2FC" stroke="#A094D8" stroke-width=".8"/>
+        <text x="580" y="172" text-anchor="middle" font-size="11" fill="#3D2A7A" font-family="'DM Mono',monospace">+ text prompt</text>
+        <text x="580" y="188" text-anchor="middle" font-size="10" fill="#A094D8" font-family="'DM Mono',monospace">guides each step</text>
       </svg>
     </div>
 
@@ -575,7 +507,7 @@
 
   <hr>
 
-  <!-- ────────────────── 4. COMPARISON ────────────────── -->
+  <!-- 4. COMPARISON -->
   <section id="comparison">
     <h2>4. Side-by-Side Comparison</h2>
     <p>Each architecture reflects a different trade-off between speed, quality, stability, and controllability.</p>
@@ -643,64 +575,54 @@
       </table>
     </div>
 
-    <!-- Diagram: visual summary comparison -->
     <div class="diagram-wrap">
-      <div class="diagram-label">Schéma — trade-off overview</div>
-      <svg width="100%" viewBox="0 0 680 160" role="img">
+      <div class="diagram-label">Trade-off overview — quality · speed · stability · diversity</div>
+      <svg width="100%" viewBox="0 0 680 160" role="img" xmlns="http://www.w3.org/2000/svg">
         <title>Trade-off comparison: GAN vs VAE vs Diffusion</title>
-        <desc>Three columns showing GAN, VAE and Diffusion scored on quality, speed, stability and diversity using filled bars.</desc>
-        <defs>
-          <marker id="arr5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </marker>
-        </defs>
+        <text x="215" y="24" text-anchor="middle" font-size="12" fill="#7A2E42" font-family="'DM Mono',monospace" font-weight="500">GAN</text>
+        <text x="375" y="24" text-anchor="middle" font-size="12" fill="#3D2A7A" font-family="'DM Mono',monospace" font-weight="500">VAE</text>
+        <text x="535" y="24" text-anchor="middle" font-size="12" fill="#2E5228" font-family="'DM Mono',monospace" font-weight="500">Diffusion</text>
 
-        <!-- Column headers -->
-        <text x="210" y="24" text-anchor="middle" font-size="13" fill="var(--purple-tx)" font-family="'DM Mono',monospace" font-weight="500">GAN</text>
-        <text x="370" y="24" text-anchor="middle" font-size="13" fill="var(--teal-tx)" font-family="'DM Mono',monospace" font-weight="500">VAE</text>
-        <text x="530" y="24" text-anchor="middle" font-size="13" fill="var(--coral-tx)" font-family="'DM Mono',monospace" font-weight="500">Diffusion</text>
+        <text x="80" y="55" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Quality</text>
+        <text x="80" y="85" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Speed</text>
+        <text x="80" y="115" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Stability</text>
+        <text x="80" y="145" text-anchor="middle" font-size="11" fill="#6B5C55" font-family="'DM Mono',monospace">Diversity</text>
 
-        <!-- Row labels -->
-        <text x="80" y="55" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">Quality</text>
-        <text x="80" y="85" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">Speed</text>
-        <text x="80" y="115" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">Stability</text>
-        <text x="80" y="145" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="'DM Mono',monospace">Diversity</text>
+        <!-- GAN bars (rose) -->
+        <rect x="148" y="41" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="148" y="41" width="116" height="14" rx="4" fill="#FDF0F3" stroke="#D4849A" stroke-width=".5"/>
+        <rect x="148" y="71" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="148" y="71" width="130" height="14" rx="4" fill="#FDF0F3" stroke="#D4849A" stroke-width=".5"/>
+        <rect x="148" y="101" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="148" y="101" width="44" height="14" rx="4" fill="#FDF0F3" stroke="#D4849A" stroke-width=".5"/>
+        <rect x="148" y="131" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="148" y="131" width="54" height="14" rx="4" fill="#FDF0F3" stroke="#D4849A" stroke-width=".5"/>
 
-        <!-- GAN bars (purple) — Quality:high, Speed:high, Stability:low, Diversity:low -->
-        <rect x="144" y="40" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="144" y="40" width="115" height="14" rx="3" fill="var(--purple-bg)" stroke="var(--purple-tx)" stroke-width=".5"/>
-        <rect x="144" y="70" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="144" y="70" width="128" height="14" rx="3" fill="var(--purple-bg)" stroke="var(--purple-tx)" stroke-width=".5"/>
-        <rect x="144" y="100" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="144" y="100" width="45" height="14" rx="3" fill="var(--purple-bg)" stroke="var(--purple-tx)" stroke-width=".5"/>
-        <rect x="144" y="130" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="144" y="130" width="55" height="14" rx="3" fill="var(--purple-bg)" stroke="var(--purple-tx)" stroke-width=".5"/>
+        <!-- VAE bars (lavender) -->
+        <rect x="308" y="41" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="308" y="41" width="72" height="14" rx="4" fill="#F5F2FC" stroke="#A094D8" stroke-width=".5"/>
+        <rect x="308" y="71" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="308" y="71" width="110" height="14" rx="4" fill="#F5F2FC" stroke="#A094D8" stroke-width=".5"/>
+        <rect x="308" y="101" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="308" y="101" width="120" height="14" rx="4" fill="#F5F2FC" stroke="#A094D8" stroke-width=".5"/>
+        <rect x="308" y="131" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="308" y="131" width="88" height="14" rx="4" fill="#F5F2FC" stroke="#A094D8" stroke-width=".5"/>
 
-        <!-- VAE bars (teal) — Quality:mid, Speed:high, Stability:high, Diversity:mid -->
-        <rect x="304" y="40" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="304" y="40" width="72" height="14" rx="3" fill="var(--teal-bg)" stroke="var(--teal-tx)" stroke-width=".5"/>
-        <rect x="304" y="70" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="304" y="70" width="110" height="14" rx="3" fill="var(--teal-bg)" stroke="var(--teal-tx)" stroke-width=".5"/>
-        <rect x="304" y="100" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="304" y="100" width="120" height="14" rx="3" fill="var(--teal-bg)" stroke="var(--teal-tx)" stroke-width=".5"/>
-        <rect x="304" y="130" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="304" y="130" width="88" height="14" rx="3" fill="var(--teal-bg)" stroke="var(--teal-tx)" stroke-width=".5"/>
-
-        <!-- Diffusion bars (coral) — Quality:very high, Speed:low, Stability:high, Diversity:very high -->
-        <rect x="464" y="40" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="464" y="40" width="130" height="14" rx="3" fill="var(--coral-bg)" stroke="var(--coral-tx)" stroke-width=".5"/>
-        <rect x="464" y="70" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="464" y="70" width="30" height="14" rx="3" fill="var(--coral-bg)" stroke="var(--coral-tx)" stroke-width=".5"/>
-        <rect x="464" y="100" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="464" y="100" width="118" height="14" rx="3" fill="var(--coral-bg)" stroke="var(--coral-tx)" stroke-width=".5"/>
-        <rect x="464" y="130" width="132" height="14" rx="3" fill="var(--surface)" stroke="var(--border)" stroke-width=".5"/>
-        <rect x="464" y="130" width="130" height="14" rx="3" fill="var(--coral-bg)" stroke="var(--coral-tx)" stroke-width=".5"/>
+        <!-- Diffusion bars (sage) -->
+        <rect x="468" y="41" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="468" y="41" width="132" height="14" rx="4" fill="#F2F6F1" stroke="#7DAD74" stroke-width=".5"/>
+        <rect x="468" y="71" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="468" y="71" width="30" height="14" rx="4" fill="#F2F6F1" stroke="#7DAD74" stroke-width=".5"/>
+        <rect x="468" y="101" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="468" y="101" width="118" height="14" rx="4" fill="#F2F6F1" stroke="#7DAD74" stroke-width=".5"/>
+        <rect x="468" y="131" width="134" height="14" rx="4" fill="#F8F3F0" stroke="#EDE6E1" stroke-width=".5"/>
+        <rect x="468" y="131" width="132" height="14" rx="4" fill="#F2F6F1" stroke="#7DAD74" stroke-width=".5"/>
       </svg>
     </div>
 
     <div class="analogy">
       <div class="analogy-label">One-sentence takeaway per model</div>
-      <p><strong>GAN</strong>: fastest and sharpest, but fragile to train. <strong>VAE</strong>: most principled, with smooth latent spaces, but images can look soft. <strong>Diffusion</strong>: most powerful and controllable today, at the cost of generation speed.</p>
+      <p><strong>GAN:</strong> fastest and sharpest, but fragile to train. &nbsp;<strong>VAE:</strong> most principled, with smooth latent spaces, but images can look soft. &nbsp;<strong>Diffusion:</strong> most powerful and controllable today, at the cost of generation speed.</p>
     </div>
   </section>
 
@@ -708,7 +630,7 @@
     <h2>Where Are We Heading?</h2>
     <p>Generative AI in computer vision has gone from an academic curiosity to a technology reshaping entire industries — film, medicine, design, and beyond.</p>
     <p>Understanding GAN, VAE, and Diffusion Models at a conceptual level is the foundation. The next step is building them — and that starts now.</p>
-    <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--hint);margin-top:1.5rem;">Computer Vision &amp; Generative AI · S8 · April 2026</p>
+    <p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--hint);margin-top:1.5rem;">Computer Vision &amp; Generative AI · S8 · April 2026</p>
   </div>
 
 </div>
