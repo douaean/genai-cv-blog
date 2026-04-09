@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Making Pixels from Scratch — Generative AI in Computer Vision</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #FAFAF8;
+      --surface:   #F2F1EC;
+      --border:    #E0DEDA;
+      --text:      #1A1918;
+      --muted:     #5E5C57;
+      --hint:      #9E9B94;
+      --purple-bg: #EEEDFE;
+      --purple-tx: #3C3489;
+      --teal-bg:   #E1F5EE;
+      --teal-tx:   #085041;
+      --coral-bg:  #FAECE7;
+      --coral-tx:  #712B13;
+      --accent:    #3C3489;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:        #18181A;
+        --surface:   #222225;
+        --border:    #333338;
+        --text:      #F0EFE9;
+        --muted:     #A8A6A0;
+        --hint:      #66645F;
+        --purple-bg: #26215C;
+        --purple-tx: #CEC BF6;
+        --teal-bg:   #04342C;
+        --teal-tx:   #9FE1CB;
+        --coral-bg:  #4A1B0C;
+        --coral-tx:  #F0997B;
+        --accent:    #AFA9EC;
+      }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Lora', Georgia, serif;
+      line-height: 1.8;
+      font-size: 17px;
+    }
+
+    /* ── Layout ── */
+    .wrapper {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 1.5rem 6rem;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+    }
+    nav .nav-brand {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--hint);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    nav .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    nav .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    nav .nav-links a:hover { color: var(--text); }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 4.5rem 0 3.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3.5rem;
+    }
+    .tag {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--hint);
+      margin-bottom: 1.4rem;
+    }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 6vw, 3.6rem);
+      font-weight: 800;
+      line-height: 1.08;
+      margin-bottom: 1.2rem;
+      color: var(--text);
+    }
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      font-style: italic;
+      max-width: 540px;
+      margin: 0 auto 1.5rem;
+    }
+    .meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--hint);
+    }
+
+    /* ── TOC ── */
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 3rem;
+    }
+    .toc-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--hint);
+      margin-bottom: 0.8rem;
+    }
+    .toc ol {
+      padding-left: 1.2rem;
+    }
+    .toc li {
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+    }
+    .toc a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .toc a:hover { color: var(--text); text-decoration: underline; }
+
+    /* ── Sections ── */
+    section { margin-bottom: 3.5rem; }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1.1rem;
+      color: var(--text);
+      padding-top: 0.5rem;
+    }
+    h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 2.2rem 0 0.7rem;
+      color: var(--text);
+    }
+    p { margin-bottom: 1.1rem; }
+
+    .lead {
+      font-size: 1.1rem;
+      color: var(--muted);
+      font-style: italic;
+      padding-left: 1.2rem;
+      border-left: 3px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 3rem 0;
+    }
+
+    /* ── Analogy box ── */
+    .analogy {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .analogy-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--hint);
+      margin-bottom: 0.5rem;
+    }
+    .analogy p { margin: 0; font-style: italic; font-size: 0.97rem; }
+
+    /* ── Summary grid ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 12px;
+      margin: 1.5rem 0;
+    }
+    .summary-card {
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+    }
+    .s-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--hint);
+      margin-bottom: 0.4rem;
+    }
+    .s-value { font-size: 0.92rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── Arch cards ── */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .arch-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.3rem;
+      background: var(--bg);
+    }
+    .arch-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-bottom: 0.9rem;
+    }
+    .icon-gan { background: var(--purple-bg); }
+    .icon-vae { background: var(--teal-bg); }
+    .icon-diff { background: var(--coral-bg); }
+    .arch-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+    .arch-tagline {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--hint);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.7rem;
+    }
+    .arch-card p { font-size: 0.92rem; color: var(--muted); margin: 0; line-height: 1.6; }
+
+    /* ── Highlight bar ── */
+    .hl {
+      border-left: 3px solid;
+      padding-left: 1rem;
+      margin: 1.5rem 0;
+    }
+    .hl p { margin: 0; font-style: italic; font-size: 0.95rem; color: var(--muted); }
+    .hl-purple { border-color: #7F77DD; }
+    .hl-teal   { border-color: #1D9E75; }
+    .hl-coral  { border-color: #D85A30; }
+
+    /* ── Mini diagram ── */
+    .mini-diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem 1.3rem;
+      margin: 1.2rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .node {
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .node-gray   { background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
+    .node-purple { background: var(--purple-bg); color: var(--purple-tx); }
+    .node-teal   { background: var(--teal-bg);   color: var(--teal-tx); }
+    .node-coral  { background: var(--coral-bg);  color: var(--coral-tx); }
+    .arrow { color: var(--hint); font-size: 18px; line-height: 1; }
+
+    /* ── Step flow ── */
+    .step-flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin: 1rem 0 0.4rem;
+    }
+    .step-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 13px;
+      font-size: 13px;
+      font-family: 'DM Mono', monospace;
+      color: var(--muted);
+    }
+    .step-caption {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--hint);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Comparison table ── */
+    .table-wrap { overflow-x: auto; margin: 1.5rem 0; border-radius: 12px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 560px; }
+    thead th {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: left;
+      padding: 12px 14px;
+      background: var(--surface);
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    tbody td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.55;
+      color: var(--text);
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--surface); }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .badge-gan  { background: var(--purple-bg); color: var(--purple-tx); }
+    .badge-vae  { background: var(--teal-bg);   color: var(--teal-tx); }
+    .badge-diff { background: var(--coral-bg);  color: var(--coral-tx); }
+
+    /* ── Conclusion ── */
+    .conclusion {
+      text-align: center;
+      padding: 3rem 1rem;
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+    }
+    .conclusion h2 { margin-bottom: 1rem; }
+    .conclusion p { color: var(--muted); max-width: 520px; margin: 0 auto 1rem; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      border-top: 1px solid var(--border);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--hint);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 540px) {
+      nav .nav-links { gap: 1rem; }
+      h1 { font-size: 2rem; }
+      .mini-diagram { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">Mini TAF · S8</span>
+  <ul class="nav-links">
+    <li><a href="#what">What</a></li>
+    <li><a href="#why">Why</a></li>
+    <li><a href="#architectures">Architectures</a></li>
+    <li><a href="#comparison">Comparison</a></li>
+  </ul>
+</nav>
+
+<div class="wrapper">
+
+  <!-- Hero -->
+  <div class="hero">
+    <span class="tag">Computer Vision &amp; Generative AI — Mini TAF · April 2026</span>
+    <h1>Making Pixels<br>from Scratch</h1>
+    <p class="subtitle">A plain-English guide to Generative AI in Computer Vision — GANs, VAEs, and Diffusion Models, explained like you're five.</p>
+    <p class="meta">S8 Deep Learning Module · April 2026</p>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <ol>
+      <li><a href="#what">What is Generative AI in Computer Vision?</a></li>
+      <li><a href="#why">Why use Generative AI?</a></li>
+      <li><a href="#architectures">The three main architectures (ELI5)</a>
+        <ol>
+          <li><a href="#gan">GAN — The Counterfeiter vs. The Detective</a></li>
+          <li><a href="#vae">VAE — The Artist Who Paints from Memory</a></li>
+          <li><a href="#diffusion">Diffusion Models — The Sculptor of Chaos</a></li>
+        </ol>
+      </li>
+      <li><a href="#comparison">Side-by-side comparison</a></li>
+    </ol>
+  </div>
+
+  <!-- 1. What -->
+  <section id="what">
+    <h2>1. What is Generative AI in Computer Vision?</h2>
+    <p class="lead">Most AI systems you've heard of are "discriminative" — they look at an image and tell you what's in it. Generative AI flips the script: it <em>creates</em> brand-new images from nothing (or from a text description).</p>
+
+    <p>Traditional CV models are like art critics. They look at a painting and say "that's a cat." Generative AI models are like the artist — they can paint a cat (or an astronaut riding a horse, or a medieval city at night) entirely on their own.</p>
+
+    <div class="analogy">
+      <div class="analogy-label">Simple analogy</div>
+      <p>Imagine teaching a child to recognise dogs vs. cats — that's classic CV. Now imagine the child can <em>draw</em> any dog or cat you describe, in any style, that has never existed before. That's Generative AI in Computer Vision.</p>
+    </div>
+
+    <p>Technically, a generative model learns the underlying statistical distribution of a dataset of images. Once it understands <em>how images are structured</em>, it can sample from that distribution to create new, realistic ones. The model isn't memorising pictures — it's learning the rules of how pixels relate to each other, and then using those rules to invent.</p>
+  </section>
+
+  <hr>
+
+  <!-- 2. Why -->
+  <section id="why">
+    <h2>2. Why Use Generative AI?</h2>
+    <p>The ability to generate realistic images unlocks a wide range of applications that were impossible or impractical with classical CV approaches.</p>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="s-label">Data augmentation</div>
+        <div class="s-value">Generate synthetic training samples when real data is scarce or expensive to collect.</div>
+      </div>
+      <div class="summary-card">
+        <div class="s-label">Image editing</div>
+        <div class="s-value">Inpainting, style transfer, super-resolution, colourisation — all powered by GenAI.</div>
+      </div>
+      <div class="summary-card">
+        <div class="s-label">Creative tools</div>
+        <div class="s-value">Text-to-image generation, concept art, product design, and fashion visualisation.</div>
+      </div>
+      <div class="summary-card">
+        <div class="s-label">Medical imaging</div>
+        <div class="s-value">Synthesise rare pathology images to train diagnostic models without patient data.</div>
+      </div>
+    </div>
+
+    <p>In short: Generative AI lets us create what doesn't exist yet — and that matters enormously in both research and industry. Beyond images, the same principles extend to video, 3D, and multimodal generation.</p>
+  </section>
+
+  <hr>
+
+  <!-- 3. Architectures -->
+  <section id="architectures">
+    <h2>3. The Three Main Architectures</h2>
+    <p>There are three dominant approaches to generative modelling in computer vision. Each has a different philosophy about <em>how</em> to teach a machine to invent images.</p>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-icon icon-gan">⚔</div>
+        <div class="arch-name">GAN</div>
+        <div class="arch-tagline">Generative Adversarial Network</div>
+        <p>Two networks compete: one fakes, one judges. The faker improves by trying to fool the judge.</p>
+      </div>
+      <div class="arch-card">
+        <div class="arch-icon icon-vae">◎</div>
+        <div class="arch-name">VAE</div>
+        <div class="arch-tagline">Variational Autoencoder</div>
+        <p>Compress an image into a structured code, then decode it. Generating = sampling a random code and decoding.</p>
+      </div>
+      <div class="arch-card">
+        <div class="arch-icon icon-diff">❄</div>
+        <div class="arch-name">Diffusion</div>
+        <div class="arch-tagline">Diffusion Models</div>
+        <p>Gradually add noise until the image is pure static, then train a network to reverse the process step by step.</p>
+      </div>
+    </div>
+
+    <!-- GAN -->
+    <h3 id="gan">3.1 GAN — The Counterfeiter vs. The Detective</h3>
+
+    <div class="hl hl-purple">
+      <p>Idea: put two networks in direct competition and let them train each other.</p>
+    </div>
+
+    <p>A GAN is composed of two neural networks playing a minimax game. The <strong>Generator</strong> tries to produce fake images that look real, starting from random noise. The <strong>Discriminator</strong> tries to tell real images apart from the Generator's fakes. They train simultaneously — the Generator improves by fooling the Discriminator, while the Discriminator improves by catching fakes.</p>
+
+    <div class="analogy">
+      <div class="analogy-label">ELI5 analogy</div>
+      <p>A forger (Generator) tries to paint fake Picassos. An art detective (Discriminator) checks every canvas and says "real or fake?". The forger studies every rejection and gets better and better. Eventually, the forgeries become indistinguishable from the originals.</p>
+    </div>
+
+    <div class="mini-diagram">
+      <div class="node node-gray">Random noise</div>
+      <span class="arrow">→</span>
+      <div class="node node-purple">Generator</div>
+      <span class="arrow">→</span>
+      <div class="node node-gray">Fake image</div>
+      <span class="arrow">→</span>
+      <div class="node node-purple">Discriminator</div>
+      <span class="arrow">→</span>
+      <div class="node node-gray">Real / Fake?</div>
+    </div>
+
+    <p><strong>Advantages:</strong> Extremely fast inference (single forward pass). Can generate very sharp, photorealistic images. Widely used in style transfer, face synthesis, and super-resolution.</p>
+    <p><strong>Limits:</strong> Training is unstable — the Generator can collapse into producing only a few types of images (mode collapse). Requires careful hyperparameter tuning. Evaluation is subjective and difficult.</p>
+
+    <!-- VAE -->
+    <h3 id="vae">3.2 VAE — The Artist Who Paints from Memory</h3>
+
+    <div class="hl hl-teal">
+      <p>Idea: learn a compact, structured representation of images and sample from it to generate new ones.</p>
+    </div>
+
+    <p>A VAE has two parts: an <strong>Encoder</strong> that compresses an image into a small vector of numbers called the latent representation, and a <strong>Decoder</strong> that reconstructs an image from that vector. The key trick: the latent space is constrained to be continuous and normally distributed, so you can sample random points from it and decode them into plausible new images. The model is trained by minimising both reconstruction error and a regularisation term (KL divergence) that keeps the latent space well-structured.</p>
+
+    <div class="analogy">
+      <div class="analogy-label">ELI5 analogy</div>
+      <p>Imagine you compress your memory of every dog you've ever seen into a single mental "concept of dogs." You can now close your eyes, pick a random point in that concept, and draw a new dog that never existed — but looks completely believable.</p>
+    </div>
+
+    <div class="mini-diagram">
+      <div class="node node-gray">Image x</div>
+      <span class="arrow">→</span>
+      <div class="node node-teal">Encoder</div>
+      <span class="arrow">→</span>
+      <div class="node node-gray">Latent μ, σ</div>
+      <span class="arrow">→</span>
+      <div class="node node-teal">Decoder</div>
+      <span class="arrow">→</span>
+      <div class="node node-gray">Reconstructed x̂</div>
+    </div>
+
+    <p><strong>Advantages:</strong> Stable and principled training. The latent space supports smooth interpolation — you can blend between two images. Well-suited for anomaly detection and data augmentation.</p>
+    <p><strong>Limits:</strong> Reconstructed images tend to be slightly blurry, because the model must average over the distribution of possible decodings. Image quality is generally lower than GANs or diffusion models.</p>
+
+    <!-- Diffusion -->
+    <h3 id="diffusion">3.3 Diffusion Models — The Sculptor of Chaos</h3>
+
+    <div class="hl hl-coral">
+      <p>Idea: learn to reverse a gradual noising process, one step at a time, until a clean image emerges from static.</p>
+    </div>
+
+    <p>Diffusion models work in two phases. In the <strong>forward process</strong>, real images have Gaussian noise added to them step-by-step (over hundreds or thousands of steps) until they become pure random static. In the <strong>reverse process</strong>, a neural network (typically a U-Net) is trained to predict and remove the noise added at each step. At generation time, the model starts from pure noise and iteratively denoises it into a coherent image. This is the technology behind Stable Diffusion, DALL-E, and Midjourney.</p>
+
+    <div class="analogy">
+      <div class="analogy-label">ELI5 analogy</div>
+      <p>Imagine taking a photograph and shredding it into confetti, one tiny cut at a time. A diffusion model watches this destruction carefully, memorising every step. At generation time, it starts with a pile of random confetti and reconstructs the photo in reverse — one piece at a time — until a coherent picture emerges.</p>
+    </div>
+
+    <div class="step-flow">
+      <div class="node node-coral">Real image x₀</div>
+      <span class="arrow">→</span>
+      <div class="step-pill">+ noise</div>
+      <span class="arrow">→</span>
+      <div class="step-pill">+ more noise</div>
+      <span class="arrow">→</span>
+      <div class="step-pill">···</div>
+      <span class="arrow">→</span>
+      <div class="node node-coral">Pure noise x_T</div>
+    </div>
+    <p class="step-caption">Generation = run the arrows backwards using the trained denoiser at each step.</p>
+
+    <p><strong>Advantages:</strong> State-of-the-art image quality and diversity. Highly controllable — can be conditioned on text prompts, sketches, or other signals. Training is stable and well-understood mathematically.</p>
+    <p><strong>Limits:</strong> Generation is slow because it requires many sequential denoising steps (often 20–1000). Higher computational cost than GANs at inference time.</p>
+  </section>
+
+  <hr>
+
+  <!-- 4. Comparison -->
+  <section id="comparison">
+    <h2>4. Side-by-Side Comparison</h2>
+    <p>Each architecture reflects a different trade-off between speed, quality, stability, and controllability. Here is how they compare across the dimensions that matter most.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Criterion</th>
+            <th><span class="badge badge-gan">GAN</span></th>
+            <th><span class="badge badge-vae">VAE</span></th>
+            <th><span class="badge badge-diff">Diffusion</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Core idea</strong></td>
+            <td>Adversarial game between Generator and Discriminator</td>
+            <td>Encode to latent code → sample → decode</td>
+            <td>Learn to reverse a step-by-step noising process</td>
+          </tr>
+          <tr>
+            <td><strong>Image quality</strong></td>
+            <td>Very sharp, photorealistic</td>
+            <td>Good but slightly blurry</td>
+            <td>State-of-the-art, highly detailed</td>
+          </tr>
+          <tr>
+            <td><strong>Training stability</strong></td>
+            <td>Unstable — mode collapse risk</td>
+            <td>Stable and reliable</td>
+            <td>Stable but slow</td>
+          </tr>
+          <tr>
+            <td><strong>Output diversity</strong></td>
+            <td>Can lack variety</td>
+            <td>Good diversity</td>
+            <td>Excellent diversity</td>
+          </tr>
+          <tr>
+            <td><strong>Generation speed</strong></td>
+            <td>Very fast (single forward pass)</td>
+            <td>Fast</td>
+            <td>Slow (many denoising steps)</td>
+          </tr>
+          <tr>
+            <td><strong>Controllability</strong></td>
+            <td>Moderate</td>
+            <td>Good (latent interpolation)</td>
+            <td>Excellent (text, sketch, guidance)</td>
+          </tr>
+          <tr>
+            <td><strong>Best for</strong></td>
+            <td>Super-resolution, face synthesis, style transfer</td>
+            <td>Data augmentation, anomaly detection, disentanglement</td>
+            <td>Text-to-image, inpainting, video generation</td>
+          </tr>
+          <tr>
+            <td><strong>Famous examples</strong></td>
+            <td>StyleGAN, CycleGAN, Pix2Pix</td>
+            <td>β-VAE, VQ-VAE</td>
+            <td>Stable Diffusion, DALL-E, Midjourney</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-label">One-sentence takeaway per model</div>
+      <p><strong>GAN</strong>: the fastest and sharpest, but fragile to train — the counterfeiter can give up too early. <strong>VAE</strong>: the most mathematically principled, with smooth latent spaces, but images can look soft. <strong>Diffusion</strong>: the most powerful and controllable today, at the cost of generation speed.</p>
+    </div>
+  </section>
+
+  <!-- Conclusion -->
+  <div class="conclusion">
+    <h2>Where Are We Heading?</h2>
+    <p>Generative AI in computer vision has gone from an academic curiosity to a technology reshaping entire industries — film, medicine, design, and beyond.</p>
+    <p>Understanding GAN, VAE, and Diffusion Models at a conceptual level is the foundation. The next step is building them — and that starts now.</p>
+    <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--hint);margin-top:1.5rem;">Computer Vision &amp; Generative AI · S8 · April 2026</p>
+  </div>
+
+</div><!-- /wrapper -->
+
+<footer>
+  Computer Vision &amp; Generative AI — Mini TAF · S8 · April 2026
+</footer>
+
+</body>
+</html>
